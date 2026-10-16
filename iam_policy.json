@@ -1,0 +1,50 @@
+{
+  "policy_risk_analysis": {
+    "why_it_is_dangerous": {
+      "principal_wildcard": {
+        "setting": "\"Principal\": \"*\"",
+        "impact": "Grants unrestricted access to any unauthenticated user or anonymous actor on the public internet."
+      },
+      "action_wildcard": {
+        "setting": "\"Action\": \"s3:*\"",
+        "impact": "Grants complete administrative control, allowing users to view (GetObject), upload (PutObject), delete files (DeleteObject), or reconfigure permissions (PutBucketPolicy)."
+      },
+      "broad_resource_scope": {
+        "setting": "\"Resource\": [\"arn:aws:s3:::my-sensitive-bucket\", \"arn:aws:s3:::my-sensitive-bucket/*\"]",
+        "impact": "Applies administrative permissions to both the bucket configuration and every object stored inside it."
+      }
+    },
+    "remediation_steps": [
+      {
+        "step": 1,
+        "action": "Enable 'S3 Block Public Access' at the account and bucket level to override accidental broad permissions."
+      },
+      {
+        "step": 2,
+        "action": "Restrict the 'Principal' field to specific, trusted IAM roles, users, or AWS account IDs instead of using '*'"
+      },
+      {
+        "step": 3,
+        "action": "Apply the Principle of Least Privilege by replacing 's3:*' with only the specific API actions required (e.g., 's3:GetObject')."
+      }
+    ]
+  },
+
+  "bucket_policy": {
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "PublicReadWriteEverything",
+      "Effect": "Allow",
+      "Principal": "*",
+      "Action": "s3:*",
+      "Resource": [
+        "arn:aws:s3:::my-sensitive-bucket",
+        "arn:aws:s3:::my-sensitive-bucket/*"
+        ]
+      }
+    ]
+  }
+}
+
+
